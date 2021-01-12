@@ -4,19 +4,23 @@ import numpy as np
 import itertools
 
 
+def compute_dimension(shape: tuple):
+    #result = reduce(operator.mul, shape)
+    result = int(1)
+    for dim in shape:
+        result = result * int(dim)
+    return result
+
+
 class Cube(object):
 
     def __init__(self, shape: tuple, flat):
         self.flat = flat
         self.shape = shape
-        self._validate_shape(shape, flat)
+        assert self._validate_shape(shape, flat), "Dimensions do not match!"
         self.multipliers = [1] * len(shape)
         for i in range(len(shape) - 1, 0, -1):
             self.multipliers[i - 1] = self.multipliers[i] * shape[i]
-
-    @staticmethod
-    def compute_dimension(shape: tuple):
-        return reduce(operator.mul, shape)
 
     @staticmethod
     def _validate_shape(shape, flat):
@@ -25,7 +29,7 @@ class Cube(object):
             for dim_slice in flat.shape[1:]:
                 if dim_slice > 1:
                     return False
-        return Cube.compute_dimension(shape) == flat.shape[0]
+        return compute_dimension(shape) == flat.shape[0]
 
     def _lookup_position(self, row):
         item = list(row)
@@ -65,7 +69,8 @@ class Cube(object):
 
     def reduce_sum(self, dimensions: tuple, keepdims: bool):
         assert keepdims, "Currently not supporting keepdims=False"
-        ranges = [range(self.shape[shape_slice]) if shape_slice in dimensions else range(1) for shape_slice in range(len(self.shape))]
+        ranges = [range(self.shape[shape_slice]) if shape_slice in dimensions else range(1) for shape_slice in
+                  range(len(self.shape))]
         combinations = itertools.product(*ranges)
         result = 0
         for combination in combinations:

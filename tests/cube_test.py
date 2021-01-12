@@ -1,9 +1,14 @@
 import unittest
 import numpy as np
-from cubes import Cube
+from cubes import Cube, compute_dimension
 
 
 class MyTestCase(unittest.TestCase):
+
+    def test_compute_dimension(self):
+        shape=(3,5)
+        self.assertEqual(15, compute_dimension(shape))
+
     def test_validate_shape(self):
         self.assertTrue(Cube._validate_shape((2, 3, 4), np.zeros(24)))
         self.assertFalse(Cube._validate_shape((2, 3, 4), np.zeros(25)))
